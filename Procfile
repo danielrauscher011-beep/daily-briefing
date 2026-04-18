@@ -1,1 +1,1 @@
-python daily_briefing.py
+web: python daily_briefing.py
