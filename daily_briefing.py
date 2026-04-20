@@ -6,7 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 
-ANTHROPIC_API_KEY = "REPLACE_API_KEY"
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 GMAIL_ADDRESS = "danielrauscher011@gmail.com"
 GMAIL_APP_PASSWORD = "REPLACE_APP_PASSWORD"
 
