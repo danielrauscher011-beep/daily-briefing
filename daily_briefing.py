@@ -1,3 +1,4 @@
+import os
 import anthropic
 import smtplib
 import schedule
