@@ -1,0 +1,29 @@
+import os
+import anthropic
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from datetime import datetime
+
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+GMAIL_ADDRESS = "danielrauscher011@gmail.com"
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
+
+PROMPT = """You are an advanced financial and macroeconomic analyst. Generate a DAILY POST-MARKET FINANCIAL BRIEFING. Structure: 1) Executive Summary 2) Market Recap with % changes for S&P500/Nasdaq/Dow/Russell/Europe/Asia/Bonds/Oil/Gold/Crypto 3) Key News - Corporate/Macro/Financial System 4) Geopolitical & Policy Analysis 5) Themes & Narratives 6) Forward Look 7) Investment Opportunities 8) Risks & Red Flags. Be direct, data-driven, high density, no fluff."""
+
+client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+message = client.messages.create(model="claude-opus-4-5", max_tokens=4096, messages=[{"role": "user", "content": PROMPT}])
+briefing = message.content[0].text
+
+today = datetime.now().strftime("%B %d, %Y")
+msg = MIMEMultipart()
+msg["Subject"] = f"Daily Financial Briefing - {today}"
+msg["From"] = GMAIL_ADDRESS
+msg["To"] = GMAIL_ADDRESS
+msg.attach(MIMEText(briefing, "plain"))
+
+with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
+    s.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+    s.sendmail(GMAIL_ADDRESS, GMAIL_ADDRESS, msg.as_string())
+
+print("Email sent successfully")
