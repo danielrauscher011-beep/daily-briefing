@@ -24,13 +24,15 @@ Structure your response exactly as follows:
 
 Be direct. No fluff. High information density. Analytical not narrative-heavy."""
 
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+print("Calling Claude API...")
+client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY, timeout=120.0)
 message = client.messages.create(
-    model="claude-opus-4-5",
+    model="claude-haiku-4-5-20251001",
     max_tokens=4096,
     messages=[{"role": "user", "content": PROMPT}]
 )
 briefing = message.content[0].text
+print("Briefing generated successfully")
 
 today = datetime.now().strftime("%B %d, %Y")
 msg = MIMEMultipart()
@@ -39,6 +41,7 @@ msg["From"] = GMAIL_ADDRESS
 msg["To"] = GMAIL_ADDRESS
 msg.attach(MIMEText(briefing, "plain"))
 
+print("Sending email...")
 with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
     s.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
     s.sendmail(GMAIL_ADDRESS, GMAIL_ADDRESS, msg.as_string())
